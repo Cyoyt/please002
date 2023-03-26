@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+<html>
+<head> 
+<meta charset="utf-8"> 
+<title>11.5</title>
+<script  type="text/javascript">
+	window.onload = function() {
+		var local1=document.getElementById('videoID');  //获取，函数执行完成后local内存释放
+		local1.autoplay = true; // 自动播放
+		local1.loop = true; // 循环播放
+		local1.muted=true; // 关闭声音，如果为false,视频无法自动播放
+		if(local1.paused){  //判断是否处于暂停状态
+			local1.play();  //开启播放
+	    }else{
+			local1.pause();  //停止播放
+	    }
+    }
+
+    function btn(){
+		var local=document.getElementById('videoID');  //获取，函数执行完成后local内存释放
+		if(local.paused){  //判断是否处于暂停状态
+			local.play();  //开启播放
+	    }else{
+			local.pause();  //停止播放
+	    }
+	}
+	</script>
+<script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+<script  src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+			$(function(){
+
+				$(".imglist li").click(function(){
+					// 获取当前图片的src
+					var src=$(this).find(".imgbox img").attr('src');
+					//添加到弹窗img
+					$(".bigimg").attr("src",src);
+					// 显示弹窗
+					$(".maskweap").fadeIn();
+				});
+				// 点击盒子以外的地方弹窗关闭
+				$(document).mousedown(function(e) {
+					if ($(e.target).parent(".imgshow").length == 0) {
+						$(".maskweap").fadeOut(); //弹窗关闭
+					}
+				});
+			})
+		</script><!-- 缩略图 -->
+<style>
+/*-----------------背景格式---------------------*/
+    body {background-image: url("image/map_bg.png");}
+/*-------------------标题格式-----------------*/
+    div#title{
+        font-weight:bold;
+        font-size: 40px;
+        color: aqua;
+        margin-top: 0%;
+        text-align:center;
+        text-shadow: black;
+        position:absolute;top: 0%;
+        margin-left: 30%;
+
+        }
+
+/*----------------------插入视频的格式、位置、隐藏边框定义----------------------*/
+.dataAllBorder02{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+.video_cage{
+    padding: 4px;
+    width: 100%;
+    object-fit: fill;
+}
+.video {
+    height: 100%;
+    width: 100%;
+}
+
+//添加
+#three-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  outline: none;
+}
+
+#file-input {
+  z-index: 1;
+  position: absolute;
+}
+
+.message-container {
+  z-index: 1;
+  position: absolute;
+  margin: 20px;
+  background-color: rgba(79, 181, 70, 0.8);
+  display: inline-block;
+  padding: 30px;
+}
+
+.message {
+  display: inline;
+  color: black;
+}
+/*----------------------插入图片的格式、位置、隐藏边框定义----------------------*/
+/* 图片弹窗 */
+.imglistwrap{width: 100%;height:100%;}
+.imglist{width: 100%;padding: 0px;margin:0px;box-sizing: border-box;box-sizing: border-box;display: flex;display: -webkit-flex;-webkit-flex-wrap: wrap;flex-wrap: wrap;}
+.imglist li{width: 100%;margin-bottom: 0%;overflow: hidden;position: relative;cursor: pointer;}
+.imglist li .imgbox{width: 100%;overflow: hidden;height: 100%;}
+.imglist li .imgbox img{display: block;width: 100%;transition: all .6s;object-fit: cover;height: 100%;}
+.imglist li:hover .imgbox img{transform: scale(1.1);}
+.imglist li .text{width: 100%;height: 100%;position: absolute;top: 0;left: 0;background-color: rgba(0,0,0,0.3);opacity: 0;transition: all .3s;display: flex;display: -webkit-flex;-webkit-justify-content: center;justify-content: center;-webkit-align-items: center;align-items: center;}
+.imglist li:hover .text{opacity: 1;}
+.imglist li .text i{font-size: 20px;color: #FFFFFF;opacity: 0;transition: all .3s;transform: translateY(-100%);-webkit-transform: translateY(-100%);}
+.imglist li:hover .text i{opacity: 1;transform: none;-webkit-transform: none;}
+
+/* maskweap */
+.maskweap{width: 100%;height: 100%;position: fixed;top: 0;left: 0;background-color: rgba(0,0,0,0.8);z-index:1;display: flex;display: -webkit-flex;-webkit-justify-content: center;justify-content: center;-webkit-align-items: center;align-items: center;display: none;}
+.maskweap .imgshow{width: 100%;box-sizing: border-box;height: 100%;display: flex;display: -webkit-flex;-webkit-align-items: center;align-items: center;-webkit-justify-content: center;justify-content: center;}
+.maskweap .imgshow img{display: block;width:auto;max-width: 28%;box-sizing: border-box;padding: 10px;background-color: #FFFFFF;}
+
+
+/*----------------------主结构边框----------------------*/
+    div.left001 {width: 25%;height: 90%;position:absolute;left: 0%;top:8%;border: 3px solid #0174f5;border-radius: 10px;background-color:rgba(20,51,104,0.54);}
+    div.right001 {width: 40%;height: 90%;position:absolute;right: 0%;top:8%;border:3px solid #0174f5;border-radius: 10px;background-color:rgba(20,51,104,0.54);}
+    div.middle001 {width: 32%;height:90%;position:absolute;right:41%;top:8%;border: 3px solid #0174f5;border-radius: 10px;background-color:rgba(20,51,104,0.54);}
+/*----------------------次级结构边框----------------------*/
+    div.video_show {width: 98%;height:30%;margin-left:auto;margin-right:auto;}
+    div.img_show {width: 98%;height:69%;margin-left:auto;margin-right:auto;margin-top:0%;border: 2px solid #0174f5;}
+    div.echart01 {width: 98%;height:23%;margin-left:auto;margin-right:auto;margin-top:1%;border: 2px solid #0174f5;}
+    div.echart02 {width: 98%;height:23%;margin-left:auto;margin-right:auto;margin-top:1%;border: 2px solid #0174f5;}
+    div.echart03 {width: 98%;height:23%;margin-left:auto;margin-right:auto;margin-top:1%;border: 2px solid #0174f5;}
+    div.echart04 {width: 98%;height:25%;margin-left:auto;margin-right:auto;margin-top:1%;border: 2px solid #0174f5;}
+    div.model_container {width:98%;height:90%;margin-left:auto;margin-right:auto;margin-top:1%;border: 2px solid #0174f5;}
+</style>
+
+</head>
+<body id="body">
+      <!--背景格式-->
+
+       <div id="title">140m打桩船桩架数字孪生示范展示</div><!--标题标签及文本-->
+
+<div>
+    <div class="left001">
+        <div class="video_show" >
+            <video autoplay="autoplay" loop="loop" class="dataAllBorder02 video_cage " id="videoID" controls="controls">
+            <source class="video" title="主监控位" src="image/1.mp4" />
+            </video>
+        </div>
+        <div class="img_show">
+            <div style="font-weight:bold;font-size: 20px;color: aqua;margin-top: 0%;position:absolute;text-align:center;text-shadow: black;position:absolute;margin-left: 8%;height:7%">
+                典型工况下桩架受力与变形仿真分析
+            </div>
+            <div class="img_table" style="margin-top: 7%">
+            <table width="100%" border="3" cellpadding="0" cellspacing="0"  >
+                <tr>
+                    <th>
+                             <div class="imglistwrap">
+                       <ul class="imglist">
+                           <li>
+                               <div class="imgbox">
+				                   <img src="image/Y方向弯曲应力云图.png" title="Y方向弯曲应力云图"/>
+			                   </div>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="maskweap">
+	               <div class="imgshow">
+		           <img src="" class="bigimg" />
+	               </div>
+                   </div>
+
+
+                    <th>
+                             <div class="imglistwrap">
+                       <ul class="imglist">
+                           <li>
+                               <div class="imgbox">
+				                   <img src="image/Y方向剪应力云图.png" title="Y方向剪应力云图"/>
+			                   </div>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="maskweap">
+	               <div class="imgshow">
+		           <img src="" class="bigimg" />
+	               </div>
+                   </div>
+
+
+                    <th>
+                             <div class="imglistwrap">
+                       <ul class="imglist">
+                           <li>
+                               <div class="imgbox">
+				                   <img src="image/Z方向弯曲应力云图.png" title="Z方向弯曲应力云图" />
+			                   </div>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="maskweap">
+	               <div class="imgshow">
+		           <img src="" class="bigimg" />
+	               </div>
+                   </div>
+                </tr>
+                <tr>
+                    <th>
+                             <div class="imglistwrap">
+                       <ul class="imglist">
+                           <li>
+                               <div class="imgbox">
+				                   <img src="image/Z方向剪应力云图.png" title="Z方向剪应力云图"/>
+			                   </div>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="maskweap">
+	               <div class="imgshow">
+		           <img src="" class="bigimg" />
+	               </div>
+                   </div>
+
+                    <th>
+                             <div class="imglistwrap">
+                       <ul class="imglist">
+                           <li>
+                               <div class="imgbox">
+				                   <img src="image/位移图.png" title="位移图" />
+			                   </div>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="maskweap">
+	               <div class="imgshow">
+		           <img src="" class="bigimg" />
+	               </div>
+                   </div>
+
+                    <th>
+                             <div class="imglistwrap">
+                       <ul class="imglist">
+                           <li>
+                               <div class="imgbox">
+
+				                   <img src="image/正应力云图.png" title="正应力云图"/>
+
+			                   </div>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="maskweap">
+	               <div class="imgshow">
+		           <img src="" class="bigimg" />
+	               </div>
+                   </div>
+
+                </tr>
+            </table>
+            </div>
+        </div>
+    </div>
+    <div class="middle001">
+
+        <div class="echart01">
+            <div class="main_01" style="font-weight:bold;width: 1%;float: left ;
+        font-size: 20px;
+        color: aqua;
+        margin-top: 0%;
+        text-shadow: black;
+        margin-left: 8%;">水下高度</div>
+            <div id="main01" style="width: 80%;height: 150%;top:-30%;margin-left: auto;margin-right: auto"></div>
+        </div>
+
+         <div class="echart02">
+             <div class="main_02" style="font-weight:bold;width: 1%;float: left ;
+        font-size: 20px;
+        color: aqua;
+        margin-top: 0%;
+        text-shadow: black;
+        margin-left: 8%;">波浪荷载</div>
+         <div id="main02" style="width: 80%;height: 130%;top:-10%;margin-left: auto;margin-right: auto"></div>
+         </div>
+
+        <div class="echart03">
+            <div class="main_04" style="font-weight:bold;width: 1%;float: left ;
+        font-size: 20px;
+        color: aqua;
+        margin-top: 0%;
+        text-shadow: black;
+        margin-left: 8%;">位移传感器</div>
+         <div id="main03" style="width: 80%;height:130%;top:-15%;margin-left: auto;margin-right: auto"></div>
+         </div>
+
+         <div class="echart04">
+             <div class="main_04" style="font-weight:bold;width: 1%;float: left ;
+        font-size: 20px;
+        color: aqua;
+        margin-top: 0%;
+        text-shadow: black;
+        margin-left: 8%;">加速度传感器</div>
+         <div id="main04" style="width: 80%;height: 130%;top:-15%;padding:0;margin-left: auto;margin-right: auto"></div>
+         </div>
+
+
+    </div>
+
+    <div class="right001">
+        <div class="right_title" style= "font-weight:bold;font-size: 30px;color: aqua;margin-top: 0%;text-shadow: black;margin-left: 33%;">桩架数字孪生模型</div>
+        <div class="model_container">
+            <div class="message-container">
+              <h2 class="message">名称:</h2>
+              <h2 class="message" id="id-output">None</h2>
+            </div>
+            <canvas id="three-canvas"></canvas>
+            <script src="bundle.js"></script>
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+			var myChart=echarts.init(document.getElementById('main01'));
+			// 指定图标的配置项和数据
+			var option = {
+				tooltip: {},
+                grid: {
+top:"32%",bottom:"50",
+    right:"0%",left:"15%",
+
+    containLabel: false
+  },
+                toolbox: {top:"20%",right:'0%',
+                 feature: {
+                     dataView: {show: true, readOnly: false},
+                     magicType: {show: true, type: ['line', 'bar']},
+                     restore: {show: true},
+                     saveAsImage: {show: true}
+                 }
+             },
+				legend:{
+					data:['销售']
+				},
+				xAxis:{
+					data:['0时','2时','4时','6时','8时','10时','12时','14时','16时','18时','20时','22时'],
+                            axisLine: {
+            lineStyle:{
+                color:'red',//x轴的颜色
+                width:3,//轴线的宽度
+            }
+        },
+				},
+				yAxis:{
+				        axisLine: {
+       lineStyle:{
+          color:'red',// y轴的颜色
+          width:3,//y轴线的宽度
+    }
+}
+                },
+				series:[{
+					name:'数据',
+					type:'line',
+					data:[7.65,5.54,4.21,3.45,4.33,5.48,7.77,5.42,4.33,3.64,4.68,5.62],
+                    smooth:"true",
+                    itemStyle : {
+                        normal : {
+                            color:'#D3D3D3', //改变点的颜色
+                            lineStyle:{
+                                color:'red' //改变折线颜色
+                            }
+                        }
+                    },
+				}]
+			};
+			myChart.setOption(option);
+		</script>
+<script type="text/javascript">
+var dom = document.getElementById("main02");
+var myChart = echarts.init(dom);
+var app = {};
+var option;
+
+function func(x) {
+    x /= 10;
+    return Math.sin(x)  * 10;
+}
+
+function generateData() {
+    let data = [];
+    for (let i = -200; i <= 200; i += 0.1) {
+        data.push([i, func(i)]);
+    }
+    return data;
+}
+
+option = {
+    toolbox: {top:"0%",right:'0%',
+                 feature: {
+                     dataView: {show: true, readOnly: false},
+                     magicType: {show: true, type: ['line', 'bar']},
+                     restore: {show: true},
+                     saveAsImage: {show: true}
+                 }
+             },
+    animation: false,
+    grid: {
+
+    top: "17%",right:"0%",left:"15%",
+
+    containLabel: false  // 这个啥？看下面
+  },
+
+    xAxis: {
+        axisLine: {
+              lineStyle: {
+                  color: 'yellow',//x轴的颜色
+                  width: 1,//轴线的宽度
+              }
+          },
+        name: 'x',
+        minorTick: {
+            show: true
+        },
+        minorSplitLine: {
+            show: true
+        }
+    },
+    yAxis: {
+        axisLine: {
+              lineStyle: {
+                  color: 'yellow',//x轴的颜色
+                  width: 1,//轴线的宽度
+              }
+          },
+        name: 'y',
+        min: -100,
+        max: 100,
+        minorTick: {
+            show: true
+        },
+        minorSplitLine: {
+            show: true
+        }
+    },
+    dataZoom: [{ // 缩放功能，可以拖动曲线
+        show: true,
+        type: 'inside',
+        filterMode: 'none',
+        xAxisIndex: [0], // 0表示第一个x轴，这里只有一个x轴
+        startValue: -150,
+        endValue: 150
+    }, {
+        show: true,
+        type: 'inside',
+        filterMode: 'none',
+        yAxisIndex: [0], // [0]表示第一个y轴，这里只有一个y轴
+        startValue: -10,
+        endValue: 10
+    }],
+    series: [
+        {
+            type: 'line',
+            showSymbol: false,
+            clip: true,
+            color:'yellow',
+            data: generateData()
+        }
+    ]
+};
+
+if (option && typeof option === 'object') {
+    myChart.setOption(option);
+}
+
+        </script>
+<script type="text/javascript">
+			var myChart=echarts.init(document.getElementById('main03'));
+			// 指定图标的配置项和数据
+			var option = {
+				tooltip: {},
+                grid: {
+top:"25%",bottom:"50",
+    right:"0%",left:"15%",
+
+    containLabel: false  // 这个啥？看下面
+  },
+                toolbox: {top:"10%",right:'0%',
+                 feature: {
+                     dataView: {show: true, readOnly: false},
+                     magicType: {show: true, type: ['line', 'bar']},
+                     restore: {show: true},
+                     saveAsImage: {show: true}
+                 }
+             },
+				legend:{
+					data:['销售']
+				},
+				xAxis:{
+					data:['8:00','8:05','8:10','8:15','8:20','8:25','8:30','8:35','8:40','8:45','8:50','8:55'],
+                            axisLine: {
+            lineStyle:{
+                color:'orange',//x轴的颜色
+                width:3,//轴线的宽度
+            }
+        },
+				},
+				yAxis:{
+				        axisLine: {
+       lineStyle:{
+          color:'orange',// y轴的颜色
+          width:3,//y轴线的宽度
+    }
+}
+                },
+				series:[{
+					name:'数据',
+					type:'line',
+					data:[0.5,0.3,0,-0.2,-0.3,0.4,0.6,-0.1,-0.3,0.2,0.2,0],
+                    itemStyle : {
+                        normal : {
+                            color:'#D3D3D3', //改变点的颜色
+                            lineStyle:{
+                                color:'orange' //改变折线颜色
+                            }
+                        }
+                    },
+				}]
+			};
+			myChart.setOption(option);
+		</script>
+<script type="text/javascript">
+var dom = document.getElementById("main04");
+var myChart = echarts.init(dom);
+var app = {};
+var option;
+
+var x_axis = [];
+var x_data = 0;
+var y_axis = [];
+var y_data = 0;
+var angle = 0;
+
+// 计算三角函数
+function sin_data(x) {
+    return Math.sin(x*Math.PI);
+}
+// 生成x轴和y轴数据
+function addData(shift) {
+    x_data++;
+    x_axis.push(x_data);
+
+	y_data = 20*sin_data(angle);
+    y_axis.push(y_data);
+    angle+=0.1;
+
+    if (shift) {
+        x_axis.shift();
+        y_axis.shift();
+	}
+}
+
+// 生成100个数据，初始化x_axis和y_axis数组，数组的长度在这里被设置成100
+for (var i = 0; i < 100; i++) {
+    addData(false);
+}
+
+option = {
+    toolbox: {top:"0%",right:'0%',
+                 feature: {
+                     dataView: {show: true, readOnly: false},
+                     magicType: {show: true, type: ['line', 'bar']},
+                     restore: {show: true},
+                     saveAsImage: {show: true}
+                 }
+             },
+    grid: {
+
+    top: "17%",right:"0%",left:"15%",
+
+    containLabel: false  // 这个啥？看下面
+  },
+    xAxis: {
+        type: 'category',
+        data: x_axis,
+          axisLine: {
+              lineStyle: {
+                  color: 'blue',//x轴的颜色
+                  width: 1,//轴线的宽度
+              }
+          }
+    },
+    yAxis: {
+        axisLine: {
+              lineStyle: {
+                  color: 'blue',//x轴的颜色
+                  width: 1,//轴线的宽度
+              }
+          },
+        type: 'value',
+    },
+    series: [{
+        data: y_axis,
+        type: 'line'
+    }]
+};
+
+setInterval(function () {;
+    addData(true); // 生成数据并左移
+    myChart.setOption(option);
+}, 2000); // 500ms刷新一次
+        </script>
+
+
+</body>
+</html>
